@@ -1,4 +1,4 @@
-FROM krakend/krakend-ee-plugin-builder:2.1.0 AS pluginbuilder
+FROM krakend/builder-ee:2.1.1 AS pluginbuilder
 
 WORKDIR /go/src/porton
 
