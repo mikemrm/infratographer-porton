@@ -1,4 +1,17 @@
-FROM krakend/builder-ee:2.1.1 AS pluginbuilder
+# Specifies the builder image to use for building krakend plugins
+ARG BUILDER_IMAGE=krakend/builder
+
+# Specifies the krakend gateway image
+ARG IMAGE=krakend/krakend
+
+# Specifies the krakend image tag to use. The tag for the builder and the
+# krakend images should match,a and so, this is handled via a single
+# variable.
+# renovate: depName=krakend/krakend
+ARG IMAGE_TAG=2.1.1
+
+
+FROM $BUILDER_IMAGE:$IMAGE_TAG AS pluginbuilder
 
 WORKDIR /go/src/porton
 
@@ -7,7 +20,7 @@ RUN mkdir -p /go/src/porton/lib
 # Run the plugin builder
 # ...
 
-FROM krakend/krakend-ee:2.1.1
+FROM $IMAGE:$IMAGE_TAG
 
 # TODO: Run krakend as a non-root user
 
