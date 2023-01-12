@@ -1,13 +1,13 @@
 # Specifies the builder image to use for building krakend plugins
-ARG BUILDER_IMAGE=krakend/builder
+ARG BUILDER_IMAGE=devopsfaith/krakend-plugin-builder
 
 # Specifies the krakend gateway image
-ARG IMAGE=krakend/krakend
+ARG IMAGE=devopsfaith/krakend
 
 # Specifies the krakend image tag to use. The tag for the builder and the
 # krakend images should match,a and so, this is handled via a single
 # variable.
-# renovate: depName=krakend/krakend
+# renovate: depName=devopsfaith/krakend
 ARG IMAGE_TAG=2.1.1
 
 
