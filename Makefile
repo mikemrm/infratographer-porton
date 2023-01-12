@@ -1,6 +1,3 @@
-# Runtime
-LICENSE_PATH?=$(PWD)/krakend-license
-
 # Container variables
 IMAGE_REGISTRY?=ghcr.io
 IMAGE_REF?=$(IMAGE_REGISTRY)/infratographer/porton/porton
@@ -24,15 +21,9 @@ else
 	@echo "Skipping Portón container image build"
 endif
 
-.PHONY: klicense
-klicense:
-	@echo "Ensuring krakend license"
-	test -f $(LICENSE_PATH) || (echo "Missing krakend license file" && exit 1)
-
 .PHONY: run
-run: image klicense
+run: image
 	@echo "Running Portón API gateway"
 	$(CNT_RUN_CMD) -p 8080:8080 \
-		-v $(LICENSE_PATH):/etc/krakend/LICENSE \
 		-v $(PWD)/tests/data/krakend-minimal-config.json:/etc/krakend/krakend.json \
 		$(IMAGE) run --config /etc/krakend/krakend.json
