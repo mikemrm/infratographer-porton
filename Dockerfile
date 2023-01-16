@@ -1,5 +1,5 @@
 # Specifies the builder image to use for building krakend plugins
-ARG BUILDER_IMAGE=devopsfaith/krakend-plugin-builder
+ARG BUILDER_IMAGE=krakend/builder
 
 # Specifies the krakend gateway image
 ARG IMAGE=devopsfaith/krakend
