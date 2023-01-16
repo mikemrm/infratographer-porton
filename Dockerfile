@@ -10,16 +10,21 @@ ARG IMAGE=devopsfaith/krakend
 # renovate: depName=devopsfaith/krakend
 ARG IMAGE_TAG=2.1.4
 
-
+# Plugin build
 FROM $BUILDER_IMAGE:$IMAGE_TAG AS pluginbuilder
 
-WORKDIR /go/src/porton
+WORKDIR /go/src/porton/lib
 
-RUN mkdir -p /go/src/porton/lib
+# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+
+COPY . .
 
 # Run the plugin builder
-# ...
+RUN go build -buildmode=plugin -o porton.so .
 
+# Gateway build
 FROM $IMAGE:$IMAGE_TAG
 
 # TODO: Run krakend as a non-root user
