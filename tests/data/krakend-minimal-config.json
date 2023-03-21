@@ -3,7 +3,7 @@
     "version": 3,
     "plugin": {
         "pattern":".so",
-        "folder": "/usr/lib/krakend/plugins/"
+        "folder": "/opt/krakend/plugins"
     },
     "endpoints": [
         {
