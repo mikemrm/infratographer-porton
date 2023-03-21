@@ -38,3 +38,5 @@ COPY --from=pluginbuilder /go/src/porton/lib /opt/krakend/plugins
 
 # Run as non-root user
 USER 1000
+
+ENTRYPOINT [ "/usr/bin/krakend" ]
