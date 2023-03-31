@@ -7,25 +7,20 @@
     },
     "endpoints": [
         {
-          "endpoint": "/test/{id}",
-          "backend": [
-            {
-              "host": [
-                "http://localhost:8080"
-              ],
-              "url_pattern": "/__health",
-              "extra_config": {
-                "plugin/http-client": {
-                    "name": "porton"
+            "endpoint": "/test/{id}",
+            "extra_config": {
+                "plugin/req-resp-modifier": {
+                    "name": ["porton"]
                 }
-              }
-            }
-          ]
+            },
+            "backend": [
+                {
+                    "host": [
+                        "http://localhost:8080"
+                    ],
+                    "url_pattern": "/__health"
+                }
+            ]
         }
-      ],
-      "extra_config": {
-        "plugin/http-server": {
-          "name": ["porton"]
-        }
-      }
+    ]
 }

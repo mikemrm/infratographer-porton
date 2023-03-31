@@ -27,3 +27,8 @@ run: image
 	$(CNT_RUN_CMD) -p 8080:8080 \
 		-v $(PWD)/tests/data/krakend-minimal-config.json:/etc/krakend/krakend.json \
 		$(IMAGE) run --config /etc/krakend/krakend.json
+
+.PHONY: unit-test
+unit-test:
+	@echo "Running unit tests"
+	go test -v ./...
