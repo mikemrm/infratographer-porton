@@ -17,6 +17,10 @@ const (
 	ActionKey = "action"
 	// TenantSourceKey is the key used to retrieve the tenant source from the configuration
 	TenantSourceKey = "tenant_source"
+	// TenantHeaderKey is the key used to retrieve the tenant header from the configuration
+	TenantHeaderKey = "tenant_header"
+	// DefaultTenantHeader is the name of the header that contains the tenant ID
+	DefaultTenantHeader = "X-Tenant-Id"
 )
 
 var (
@@ -50,6 +54,8 @@ type Config struct {
 	Action string `json:"action"`
 	// TenantSource is the source of the tenant ID
 	TenantSource TenantSource `json:"tenant_source"`
+	// Tenant Header. If the tenant source is header, this is the header name
+	TenantHeader string `json:"tenant_header"`
 }
 
 // ParseConfig parses the configuration and returns a Config object
@@ -116,6 +122,12 @@ func ParseConfig(cfg map[string]interface{}) (*Config, error) {
 		return nil, err
 	}
 
+	// Verify tenant header
+	th, thkeyerr := getOrDefault(pconf, TenantHeaderKey, DefaultTenantHeader)
+	if thkeyerr != nil {
+		return nil, fmt.Errorf("%w: %s is not a valid tenant header", ErrInvalidConfig, TenantHeaderKey)
+	}
+
 	return &Config{
 		AuthorizationService: &AuthzService{
 			Endpoint: parsedURL,
@@ -123,6 +135,7 @@ func ParseConfig(cfg map[string]interface{}) (*Config, error) {
 		},
 		Action:       action,
 		TenantSource: TenantSource(tenantSource),
+		TenantHeader: th,
 	}, nil
 }
 

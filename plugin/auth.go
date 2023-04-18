@@ -13,8 +13,6 @@ import (
 const (
 	// AuthorizationHeader is the name of the header that contains the authorization token
 	AuthorizationHeader = "Authorization"
-	// TenantHeader is the name of the header that contains the tenant ID
-	TenantHeader = "X-Tenant-Id"
 	// HTTPJSONEncoding is the JSON encoding
 	HTTPJSONEncoding = "application/json"
 )
@@ -54,11 +52,6 @@ func (r HTTPResponseError) Encoding() string {
 // getAuthorizationHeader returns the value of the Authorization header from the given request
 func getAuthorizationHeader(req RequestWrapper) string {
 	return getHeader(req, AuthorizationHeader)
-}
-
-// getTenantHeader returns the value of the X-Tenant-Id header from the given request
-func getTenantHeader(req RequestWrapper) string {
-	return getHeader(req, TenantHeader)
 }
 
 // getHeader returns the value of the given header from the given request
@@ -134,7 +127,7 @@ func handleAuthorizationRequest(ctx context.Context, req RequestWrapper, cfg *Co
 	var tenantID string
 	switch cfg.TenantSource {
 	case HeaderTenantSource:
-		tenantID = getTenantHeader(req)
+		tenantID = getHeader(req, cfg.TenantHeader)
 	case PathTenantSource:
 		tenantID = getTenantFromPath(req)
 	}

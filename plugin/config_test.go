@@ -45,6 +45,7 @@ func TestParseConfig(t *testing.T) {
 				},
 				Action:       "read",
 				TenantSource: "header",
+				TenantHeader: "X-Tenant-Id",
 			},
 			wantErr: false,
 		},
@@ -65,6 +66,30 @@ func TestParseConfig(t *testing.T) {
 				},
 				Action:       "read",
 				TenantSource: "path",
+				TenantHeader: "X-Tenant-Id",
+			},
+			wantErr: false,
+		},
+		{
+			name: "valid config with tenant header",
+			cfg: map[string]interface{}{
+				PluginName: map[string]interface{}{
+					"authz_service": map[string]interface{}{
+						"endpoint": "http://authz",
+					},
+					"action":        "read",
+					"tenant_source": "header",
+					"tenant_header": "foo",
+				},
+			},
+			want: &Config{
+				AuthorizationService: &AuthzService{
+					Endpoint: mustParseURL(t, "http://authz"),
+					Timeout:  1000,
+				},
+				Action:       "read",
+				TenantSource: "header",
+				TenantHeader: "foo",
 			},
 			wantErr: false,
 		},
@@ -190,6 +215,21 @@ func TestParseConfig(t *testing.T) {
 					},
 					"action":        "read",
 					"tenant_source": 1234,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "invalid config - invalid tenant_header type",
+			cfg: map[string]interface{}{
+				PluginName: map[string]interface{}{
+					"authz_service": map[string]interface{}{
+						"endpoint": "http://authz",
+						"timeout":  2000,
+					},
+					"action":        "read",
+					"tenant_header": 1234,
 				},
 			},
 			want:    nil,
