@@ -20,6 +20,8 @@ github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 go.infratographer.com/permissions-api v0.1.0 h1:ISl2WlzsiAS5Ha8EmvAYlbL8OsPLiUD36gsXP32Gl4o=
 go.infratographer.com/permissions-api v0.1.0/go.mod h1:37cFcMXsn31OfYq5AKXnRQZnIMY4VeWaJ+M8h3unW+0=
+go.infratographer.com/permissions-api v0.1.1 h1:q1zFR3QF++2TmDQ8waVQ4jcprZv191agj8te0LhIzlk=
+go.infratographer.com/permissions-api v0.1.1/go.mod h1:tviYH+Efcu4cL4BVxw+QWMnCMtfSVqrc7D0qhivxrJo=
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0 h1:lE9EJyw3/JhrjWH/hEy9FptnalDQgj7vpbgC2KCCCxE=
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0/go.mod h1:pcQ3MM3SWvrA71U4GDqv9UFDJ3HQsW7y5ZO3tDTlUdI=
 go.opentelemetry.io/otel v1.14.0 h1:/79Huy8wbf5DnIPhemGB+zEPVwnN6fuQybr/SRXa6hM=
