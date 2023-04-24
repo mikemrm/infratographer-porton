@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/stretchr/testify v1.8.2
-	go.infratographer.com/permissions-api v0.1.1
+	go.infratographer.com/permissions-api v0.1.2
 )
 
 require (
