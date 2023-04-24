@@ -15,12 +15,10 @@ const (
 	AuthnServiceTimeoutKey = "timeout"
 	// ActionKey is the key used to retrieve the action from the configuration
 	ActionKey = "action"
-	// TenantSourceKey is the key used to retrieve the tenant source from the configuration
-	TenantSourceKey = "tenant_source"
-	// TenantHeaderKey is the key used to retrieve the tenant header from the configuration
-	TenantHeaderKey = "tenant_header"
-	// DefaultTenantHeader is the name of the header that contains the tenant ID
-	DefaultTenantHeader = "X-Tenant-Id"
+	// ResourceTypeKey is the key used to retrieve the resource type from the configuration
+	ResourceTypeKey = "resource_type"
+	// ResourceParamKey is the key used to retrieve the resource param from the configuration
+	ResourceParamKey = "resource_param"
 )
 
 var (
@@ -38,24 +36,15 @@ type AuthzService struct {
 	Timeout int `json:"timeout"`
 }
 
-type TenantSource string
-
-const (
-	// HeaderTenantSource is the value used to indicate that the tenant ID is in the header
-	HeaderTenantSource TenantSource = "header"
-	// PathTenantSource is the value used to indicate that the tenant ID is in the path
-	PathTenantSource TenantSource = "path"
-)
-
 type Config struct {
 	// AuthorizationService is the URL of the authorization server
 	AuthorizationService *AuthzService `json:"authz_service"`
 	// Action is the action to be performed
 	Action string `json:"action"`
-	// TenantSource is the source of the tenant ID
-	TenantSource TenantSource `json:"tenant_source"`
-	// Tenant Header. If the tenant source is header, this is the header name
-	TenantHeader string `json:"tenant_header"`
+	// ResourceType is the name of resource type
+	ResourceType string `json:"resource_type"`
+	// ResourceParam is the name of the resource parameter
+	ResourceParam string `json:"resource_param"`
 }
 
 // ParseConfig parses the configuration and returns a Config object
@@ -112,20 +101,16 @@ func ParseConfig(cfg map[string]interface{}) (*Config, error) {
 		return nil, actionVerifyErr
 	}
 
-	// Verify tenant source
-	tenantSource, tserr := getOrDefault(pconf, TenantSourceKey, string(PathTenantSource))
-	if tserr != nil {
-		return nil, fmt.Errorf("%w: %s is not a valid tenant source", ErrInvalidConfig, TenantSourceKey)
+	// Verify resource type
+	resourceType, resourceTypeVerifyErr := stringRequired(pconf, ResourceTypeKey)
+	if resourceTypeVerifyErr != nil {
+		return nil, resourceTypeVerifyErr
 	}
 
-	if err := verifyTenantsource(tenantSource); err != nil {
-		return nil, err
-	}
-
-	// Verify tenant header
-	th, thkeyerr := getOrDefault(pconf, TenantHeaderKey, DefaultTenantHeader)
-	if thkeyerr != nil {
-		return nil, fmt.Errorf("%w: %s is not a valid tenant header", ErrInvalidConfig, TenantHeaderKey)
+	// Verify resource path param
+	resourceParam, resourceParamVerifyErr := stringRequired(pconf, ResourceParamKey)
+	if resourceParamVerifyErr != nil {
+		return nil, resourceParamVerifyErr
 	}
 
 	return &Config{
@@ -133,9 +118,9 @@ func ParseConfig(cfg map[string]interface{}) (*Config, error) {
 			Endpoint: parsedURL,
 			Timeout:  tmout,
 		},
-		Action:       action,
-		TenantSource: TenantSource(tenantSource),
-		TenantHeader: th,
+		Action:        action,
+		ResourceType:  resourceType,
+		ResourceParam: resourceParam,
 	}, nil
 }
 
@@ -190,13 +175,4 @@ func getOrDefault[T comparable](conf map[string]interface{}, key string, def T) 
 	}
 
 	return conf[key].(T), nil
-}
-
-func verifyTenantsource(tenantSource string) error {
-	switch TenantSource(tenantSource) {
-	case HeaderTenantSource, PathTenantSource:
-		return nil
-	default:
-		return fmt.Errorf("%w: %s is not a valid tenant source", ErrInvalidConfig, tenantSource)
-	}
 }

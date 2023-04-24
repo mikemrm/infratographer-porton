@@ -7,10 +7,18 @@
     },
     "endpoints": [
         {
-            "endpoint": "/test/{id}",
-            "extra_config": {
-                "plugin/req-resp-modifier": {
-                    "name": ["porton"]
+            "endpoint": "/test/{test_id}",
+            "extra_config":{
+                "plugin/req-resp-modifier":{
+                    "name": ["porton"],
+                    "porton":{
+                        "authz_service":{
+                          "endpoint": "https://localhost:7608"
+                        },
+                        "action": "test_get",
+                        "resource_type": "test",
+                        "resource_param": "test_id"
+                    }
                 }
             },
             "backend": [

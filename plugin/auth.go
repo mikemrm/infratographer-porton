@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
+	"net/textproto"
 
+	"github.com/google/uuid"
 	authclientv1 "go.infratographer.com/permissions-api/pkg/client/v1"
+	"go.infratographer.com/x/urnx"
 )
 
 const (
@@ -20,12 +22,14 @@ const (
 var (
 	// ErrNoValidToken is returned when no valid token is found in the request
 	ErrNoValidToken = errors.New("no valid token found")
-	// ErrNoValidTenant is returned when no valid tenant is found in the request
-	ErrNoValidTenant = errors.New("no valid tenant found")
 	// ErrCreatingAuthzClient is returned when an error occurs creating the authz client
 	ErrCreatingAuthzClient = errors.New("error creating authz client")
 	// ErrCheckingPermissions is returned when an error occurs checking permissions
 	ErrCheckingPermissions = errors.New("error checking permissions")
+	// ErrNoValidResourceID is returned when no valid resource ID is found in the request
+	ErrNoValidResourceID = errors.New("no valid resource ID found")
+	// ErrInvalidResourceUUID is returned when the resource ID is not a valid UUID
+	ErrInvalidResourceUUID = errors.New("resource ID is not a valid UUID")
 )
 
 type HTTPResponseError struct {
@@ -69,27 +73,6 @@ func getHeader(req RequestWrapper, header string) string {
 	return req.Headers()[header][0]
 }
 
-// getTenantFromPath returns the tenant ID from the path
-// It will find the `tenants` path segment and fetch the next one
-// This assumes that the path is in the format `/v1/tenants/{tenant_id}/...`
-// and that the tenant ID is the next path segment
-// If the path is not in this format, the tenant ID will be empty
-// and the request will be rejected
-func getTenantFromPath(req RequestWrapper) string {
-	p := req.Path()
-
-	segments := strings.Split(p, "/")
-	for i, s := range segments {
-		if s == "tenants" {
-			if i+1 < len(segments) {
-				return segments[i+1]
-			}
-		}
-	}
-
-	return ""
-}
-
 // tokenRoundTripper is a round tripper that adds the authorization token to the request
 // It is used to create the authz client.
 // Note that token validation is not performed here, it is performed by an earlier
@@ -119,21 +102,25 @@ func (t *tokenRoundTripper) RoundTrip(req *http.Request) (*http.Response, error)
 // handleAuthorizationRequest handles the authorization request
 // It returns a boolean indicating whether the request is authorized and an error
 func handleAuthorizationRequest(ctx context.Context, req RequestWrapper, cfg *Config) (bool, error) {
+	resourceId := getResourceID(req, cfg.ResourceParam)
+	if resourceId == "" {
+		return false, ErrNoValidResourceID
+	}
+
+	resUUID, err := uuid.Parse(resourceId)
+	if err != nil {
+		return false, ErrInvalidResourceUUID
+	}
+
+	urn, err := urnx.Build("infratrographer", cfg.ResourceType, resUUID)
+	if err != nil {
+		logger.Error("error building urn from resource type and id", err)
+		return false, ErrInvalidResourceUUID
+	}
+
 	btok := getAuthorizationHeader(req)
 	if btok == "" {
 		return false, ErrNoValidToken
-	}
-
-	var tenantID string
-	switch cfg.TenantSource {
-	case HeaderTenantSource:
-		tenantID = getHeader(req, cfg.TenantHeader)
-	case PathTenantSource:
-		tenantID = getTenantFromPath(req)
-	}
-
-	if tenantID == "" {
-		return false, ErrNoValidTenant
 	}
 
 	httpcli := &http.Client{
@@ -144,10 +131,23 @@ func handleAuthorizationRequest(ctx context.Context, req RequestWrapper, cfg *Co
 		return false, ErrCreatingAuthzClient
 	}
 
-	allowed, err := authzcli.Allowed(ctx, cfg.Action, tenantID)
+	allowed, err := authzcli.Allowed(ctx, cfg.Action, urn.String())
 	if err != nil {
 		return false, fmt.Errorf("%w: %v", ErrCheckingPermissions, err)
 	}
 
 	return allowed, nil
+}
+
+// getResourceID returns the resource ID from the request
+func getResourceID(req RequestWrapper, paramName string) string {
+	if req.Params() == nil {
+		return ""
+	}
+
+	// this is what they do in the lura project :grimace:
+	// https://github.com/luraproject/lura/blob/20f8788a5f61d85a73cc31247c7e3b0dcd86a6df/router/gin/endpoint.go#L117
+	p := textproto.CanonicalMIMEHeaderKey(paramName[:1]) + paramName[1:]
+
+	return req.Params()[p]
 }

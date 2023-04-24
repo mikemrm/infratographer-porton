@@ -31,8 +31,8 @@ It takes the following configuration options:
 - `authz_service.endpoint`: The endpoint of the auth service.
 - `authz_service.timeout`: The timeout for the auth service call in milliseconds. (default: `1000`)
 - `action`: The action to validate against the auth service.
-- `tenant_source`: The source of the tenant ID. Can be `header` or `path`. (default: `path`)
-- `tenant_header`: The header to use for the tenant ID. (default: `X-Tenant-ID`)
+- `resource_type`: The name of resource type used to construct the URN in calls to the permissions api.
+- `resource_param`: The endpoint path parameter name for the resource.
 
 # References
 

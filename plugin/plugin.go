@@ -35,7 +35,7 @@ official plugin loader example.
 */
 type portonRegisterer string
 
-var unkownTypeErr = errors.New("unknow request type")
+var unkownTypeErr = errors.New("unknown request type")
 
 // PluginName is the name of the plugin
 const PluginName = "porton"
