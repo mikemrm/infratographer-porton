@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/stretchr/testify v1.8.2
 	go.infratographer.com/permissions-api v0.1.2
-	go.infratographer.com/x v0.0.6
+	go.infratographer.com/x v0.0.7
 )
 
 require (

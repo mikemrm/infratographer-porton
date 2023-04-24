@@ -35,6 +35,8 @@ go.infratographer.com/permissions-api v0.1.2 h1:Lvi/7w13ULWmupiIe5HXe3LaC39A3tgm
 go.infratographer.com/permissions-api v0.1.2/go.mod h1:tviYH+Efcu4cL4BVxw+QWMnCMtfSVqrc7D0qhivxrJo=
 go.infratographer.com/x v0.0.6 h1:b+IeDact60+5qPBCYKZe/TJMXOAM1FlapMt7tGmw/Tk=
 go.infratographer.com/x v0.0.6/go.mod h1:yRNFRLtURkukh4Wbd1SpNgCzhsUMaxV544rFYc3g0ZU=
+go.infratographer.com/x v0.0.7 h1:eUdA1zZpV/odXWjsNlsuYR+s++zf6G//CG7SPFXglDQ=
+go.infratographer.com/x v0.0.7/go.mod h1:yRNFRLtURkukh4Wbd1SpNgCzhsUMaxV544rFYc3g0ZU=
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0 h1:lE9EJyw3/JhrjWH/hEy9FptnalDQgj7vpbgC2KCCCxE=
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0/go.mod h1:pcQ3MM3SWvrA71U4GDqv9UFDJ3HQsW7y5ZO3tDTlUdI=
 go.opentelemetry.io/otel v1.14.0 h1:/79Huy8wbf5DnIPhemGB+zEPVwnN6fuQybr/SRXa6hM=
